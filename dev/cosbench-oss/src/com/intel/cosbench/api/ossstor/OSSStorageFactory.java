@@ -1,4 +1,4 @@
-package com.intel.cosbench.api.OSSStor;
+package com.intel.cosbench.api.ossstor;
 
 import com.intel.cosbench.api.storage.*;
 

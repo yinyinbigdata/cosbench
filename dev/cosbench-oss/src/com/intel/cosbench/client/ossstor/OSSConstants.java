@@ -1,5 +1,5 @@
 
-package com.intel.cosbench.client.OSSStor;
+package com.intel.cosbench.client.ossstor;
 
 public interface OSSConstants {
     // --------------------------------------------------------------------------

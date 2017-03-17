@@ -1,6 +1,6 @@
-package com.intel.cosbench.api.S3Stor;
+package com.intel.cosbench.api.ossstor;
 
-import static com.intel.cosbench.client.S3Stor.S3Constants.*;
+import static com.intel.cosbench.client.ossstor.OSSConstants.*;
 
 import java.io.*;
 
@@ -12,9 +12,10 @@ import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.DeleteObjectsRequest;
 import com.aliyun.oss.model.DeleteObjectsResult;
 import com.aliyun.oss.model.ListObjectsRequest;
+import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
-
+import com.aliyun.oss.model.ObjectMetadata;
 import com.intel.cosbench.api.storage.*;
 import com.intel.cosbench.api.context.*;
 import com.intel.cosbench.config.Config;
@@ -33,7 +34,7 @@ public class OSSStorage extends NoneStorage {
     public void init(Config config, Logger logger) {
         super.init(config, logger);
 
-        timeout = config.getInt(CONNN_TIMEOUT_KEY, CONN_TIMEOUT_DEFAULT);
+        timeout = config.getInt(CONN_TIMEOUT_KEY, CONN_TIMEOUT_DEFAULT);
 
         parms.put(CONN_TIMEOUT_KEY, timeout);
 
@@ -44,7 +45,6 @@ public class OSSStorage extends NoneStorage {
         parms.put(ENDPOINT_KEY, endpoint);
         parms.put(AUTH_USERNAME_KEY, accessKey);
         parms.put(AUTH_PASSWORD_KEY, secretKey);
-        parms.put(PATH_STYLE_ACCESS_KEY, pathStyleAccess);
 
         logger.debug("using storage config: {}", parms);
 
@@ -115,7 +115,7 @@ public class OSSStorage extends NoneStorage {
                         client.deleteBucket(container);
                 }
         } catch(OSSException oe) {
-                if(oe.getErrorCode() != HttpStatus.SC_NOT_FOUND) {
+                if(oe.getErrorCode() != "BucketAlreadyExists") {
                         throw new StorageException(oe);
                 }
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class OSSStorage extends NoneStorage {
         try {
             client.deleteObject(container, object);
         } catch(OSSException oe) {
-                if(oe.getStatusCode() != HttpStatus.SC_NOT_FOUND) {
+                if(oe.getErrorCode() != "BucketAlreadyExists") {
                         throw new StorageException(oe);
                 }
         } catch (Exception e) {
